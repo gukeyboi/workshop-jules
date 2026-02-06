@@ -359,7 +359,7 @@ int main()
     // TODO: modifier l'image
     //sil::Image image{300/*width*/, 200/*height*/};
     
-    //keepgreenonly(image);
+    //keep_green_only(image);
     //black_and_white(image);
     //swap_colors(image);
     //mirror(image);
@@ -373,7 +373,8 @@ int main()
     //mosaic(image);
     //mirrormosaic(image);
     //gradient(image);
-    pixelsort_chimpanze(image);
+    //pixelsort_chimpanze(image);
+    //pixelsort_ouistiti(image);
     //image.save("output/pouet.png");
    
 }
