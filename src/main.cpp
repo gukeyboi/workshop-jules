@@ -370,12 +370,14 @@ int main()
     //rgb_split(image);
     //rotation(image);
     //noise(image);
+    //glitch(image);
     //mosaic(image);
     //mirrormosaic(image);
     //gradient(image);
     //pixelsort_chimpanze(image);
+    melt(image);
     //pixelsort_ouistiti(image);
-    //image.save("output/pouet.png");
+    image.save("output/pouet.png");
    
 }
 
