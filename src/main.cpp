@@ -26,6 +26,7 @@ void black_and_white(sil::Image &image) {
 }
 }
 
+
 void swap_colors(sil::Image &image) {
     for (int x{0}; x < image.width(); x++)
 {
@@ -161,7 +162,7 @@ void noise(sil::Image &image) {
     for (int y{0}; y < image.height(); y++)
     {
         int randomizer = random_int(0,10);
-        if (randomizer < 4) {
+        if (randomizer < 1) {
         image.pixel(x, y).r = random_float(0,1);
         image.pixel(x, y).g = random_float(0,1);
         image.pixel(x, y).b = random_float(0,1);
@@ -250,13 +251,130 @@ void glitch(sil::Image &image) {
 }
 }
 
+float pixelbrightness(glm::vec3 singlepixel) {
+    float brightness = (singlepixel.b + singlepixel.r + singlepixel.g) / 3.;
+    return brightness;
+}
+
+float get_brightness(glm::vec3 pixel) {
+    return 0.2126*pixel.r + 0.7152*pixel.g + 0.0722*pixel.b;
+}
+
+float pixelhue(glm::vec3 singlepixel) {
+float hue = (singlepixel.b + singlepixel.r + singlepixel.g) / 3.;
+return hue;
+    }
+
+
+
+void pixelsort_ouistiti(sil::Image &image) {
+    //std::vector<glm::vec3> v{image.pixels()};
+    std::sort(image.pixels().begin(), image.pixels().end(), [](glm::vec3 const& color1, glm::vec3 const& color2)
+{
+    return get_brightness(color1) < get_brightness(color2); // Trie selon la luminosité des couleurs (NB : c'est à vous de coder la fonction `brightness`)
+});
+
+    }
+
+void melt(sil::Image &image) {
+
+    std::vector<std::vector<glm::vec3>> tab_colonnes{};
+
+    for (int x{0}; x < image.width(); x++) {
+        tab_colonnes.push_back(std::vector<glm::vec3>{});
+        for (int y{0}; y < image.height(); y++) {
+            tab_colonnes.back().push_back(image.pixel(x, y));
+        }
+    }
+
+    for (int i{0}; i < image.width(); i++) {
+
+        std::sort(tab_colonnes[i].begin(), tab_colonnes[i].end(), [](glm::vec3 const& color1, glm::vec3 const& color2)
+    
+    {
+    
+        return pixelbrightness(color1) < pixelbrightness(color2); // Trie selon la luminosité des couleurs (NB : c'est à vous de coder la fonction `brightness`)
+    });
+        
+    }
+    
+
+    for (int x{0}; x < image.width(); x++) {
+        for (int y{0}; y < image.height(); y++) {
+        image.pixel(x, y) =  tab_colonnes[x][y];
+        }
+    }
+
+}
+
+void melt_sinus(sil::Image &image) {
+    sil::Image newImage(image.width(), image.height());
+    for (int x{0}; x < image.width(); x++)
+{
+int random = 10 * sin(x/500.f * 7 * 2) ;
+
+    for (int y{0}; y < image.height(); y++)
+    {
+            float red = image.pixel(x, y).r;
+            float green = image.pixel(x , y).g;
+            float blue = image.pixel(x, y).b;   
+            if (!(y + random >= image.height() || y + random < 0)) {
+                newImage.pixel(x, y + random).r = red;
+                newImage.pixel(x, y + random).g = green;
+                newImage.pixel(x, y + random).b = blue;
+            }
+        
+    }
+    
+}
+noise(newImage);
+melt(newImage);
+
+newImage.save("output/pouet.png");
+}
+
+
+void pixelsort_chimpanze(sil::Image &image) {
+    std::vector<glm::vec3> v{image.pixels()};
+    
+
+    std::sort(image.pixels().begin(), image.pixels().end(), [](glm::vec3 const& color1, glm::vec3 const& color2)
+{
+    
+    return pixelbrightness(color1) < pixelbrightness(color2); // Trie selon la luminosité des couleurs (NB : c'est à vous de coder la fonction `brightness`)
+});
+   melt_sinus(image); 
+   
+
+    }
+
+  
+
+
+
+
 int main()
 {
     sil::Image image{"images/logo.png"};
     // TODO: modifier l'image
     //sil::Image image{300/*width*/, 200/*height*/};
-    glitch(image);
-   image.save("output/pouet.png");
+    
+    //keepgreenonly(image);
+    //black_and_white(image);
+    //swap_colors(image);
+    //mirror(image);
+    //mirror_vertical(image);
+    //invert_colors(image);
+    //brightness(image);
+    //lessbright(image);
+    //rgb_split(image);
+    //rotation(image);
+    //noise(image);
+    //mosaic(image);
+    //mirrormosaic(image);
+    //gradient(image);
+    pixelsort_chimpanze(image);
+    //image.save("output/pouet.png");
    
 }
 
